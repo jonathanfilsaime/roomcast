@@ -1,4 +1,4 @@
-package com.opencortex.roomcast;
+package com.opencortex.roomcast.WebSocketConfig;
 
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;

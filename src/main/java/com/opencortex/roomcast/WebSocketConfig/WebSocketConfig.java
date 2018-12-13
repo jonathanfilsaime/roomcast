@@ -1,4 +1,4 @@
-package com.opencortex.roomcast;
+package com.opencortex.roomcast.WebSocketConfig;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

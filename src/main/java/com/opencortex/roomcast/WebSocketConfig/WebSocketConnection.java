@@ -1,4 +1,4 @@
-package com.opencortex.roomcast;
+package com.opencortex.roomcast.WebSocketConfig;
 
 
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;

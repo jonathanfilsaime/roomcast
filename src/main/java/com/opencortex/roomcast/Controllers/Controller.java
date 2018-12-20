@@ -60,13 +60,13 @@ public class Controller {
         {
             Map<String, String> questionMap = new HashMap<>();
 
-            questionMap.put("id", question.getId().toString());
+            questionMap.put("question_id", question.getQuestion_id().toString());
             questionMap.put("question", question.getQuestion());
             questionMap.put("yes", String.valueOf(question.getYes()));
             questionMap.put("no", String.valueOf(question.getNo()));
-            questionMap.put("room_id", question.getRoom().getId().toString());
+            questionMap.put("room_id", question.getRoom().getRoom_id().toString());
 
-            if(id == question.getRoom().getId())
+            if(id == question.getRoom().getRoom_id())
             {
                 questionArrayList.add(questionMap);
             }
@@ -86,7 +86,7 @@ public class Controller {
         Map<String, String> message_value = new HashMap<>();
         questionRepository.findAll().forEach( question ->
         {
-            if(question.getRoom().getId() == room_id && question.getId() == question_id)
+            if(question.getRoom().getRoom_id() == room_id && question.getQuestion_id() == question_id)
             {
                 if(value.get("value"))
                 {

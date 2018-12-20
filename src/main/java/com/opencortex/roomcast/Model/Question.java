@@ -13,7 +13,7 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long question_id;
     String question;
     int yes = 0;
     int no = 0;

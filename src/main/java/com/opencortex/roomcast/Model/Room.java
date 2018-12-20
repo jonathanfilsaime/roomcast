@@ -3,11 +3,14 @@ package com.opencortex.roomcast.Model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
-public class RoomData {
+@Table(name = "rooms")
+public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,13 +19,13 @@ public class RoomData {
     String description;
     String timeStamp;
 
-    @OneToMany(mappedBy = "roomData")
-    private List<RoomMessage> message;
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "room")
+//    private Set<Question> questions = new HashSet<>();
 
-    public RoomData() {
+    public Room() {
     }
 
-    public RoomData(int roomNumber, String description, String timeStamp) {
+    public Room(int roomNumber, String description, String timeStamp) {
         this.roomNumber = roomNumber;
         this.description = description;
         this.timeStamp = timeStamp;

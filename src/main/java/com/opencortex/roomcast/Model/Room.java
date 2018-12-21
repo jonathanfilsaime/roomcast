@@ -15,7 +15,6 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long room_id;
-    int roomNumber;
     String description;
     String timeStamp;
 
@@ -25,8 +24,7 @@ public class Room {
     public Room() {
     }
 
-    public Room(int roomNumber, String description, String timeStamp) {
-        this.roomNumber = roomNumber;
+    public Room(String description, String timeStamp) {
         this.description = description;
         this.timeStamp = timeStamp;
     }

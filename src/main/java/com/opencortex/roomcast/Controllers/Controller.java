@@ -28,26 +28,35 @@ public class Controller {
 
     @CrossOrigin
     @RequestMapping(value="/room", method = RequestMethod.POST)
-    public int create(@RequestBody Map<String, String> roomDescription)
+    public Map<String, Integer> create(@RequestBody Map<String, String> roomDescription)
     {
         int roomNumber = (int)(roomRepository.count()) + 1;
         LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("GMT-06:00"));
 
-        roomRepository.save(new Room(roomNumber, roomDescription.get("description"),
+        roomRepository.save(new Room(roomDescription.get("description"),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.US).format(localDateTime)));
 
-        return roomNumber;
+        Map<String, Integer> roomDetail = new HashMap<>();
+        roomDetail.put("room number", roomNumber);
+        return roomDetail;
     }
 
     @CrossOrigin
     @RequestMapping(value = "/room/{room_id}/question", method = RequestMethod.POST)
-    public void createQuestion(@PathVariable("room_id") long room_id, @RequestBody Map<String, String> question)
+    public Map<String, String> createQuestion(@PathVariable("room_id") long room_id, @RequestBody Map<String, String> question)
     {
         Question questions = new Question(question.get("question"));
         questions.setRoom(roomRepository.findById(room_id).get());
 
         questionRepository.save(questions);
 
+        Map<String, String> questionPosted = new HashMap<>();
+
+        questionPosted.put("room_id", Long.toString(room_id));
+        questionPosted.put("question_id", Long.toString(questionRepository.count()));
+        questionPosted.put("question", question.get("question"));
+        
+        return questionPosted;
     }
 
     @CrossOrigin
@@ -78,12 +87,13 @@ public class Controller {
 
     @CrossOrigin
     @RequestMapping(value = "/room/{room_id}/{question_id}/message" , method = RequestMethod.PUT)
-    public void proxy(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id,
+    public Map<String, String> proxy(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id,
                       @RequestBody Map<String, Boolean> value) throws ExecutionException, InterruptedException
     {
         System.err.println("/room/{id}/message id: " + room_id + " question_id : "+ question_id +  " message is : " + value.get("value"));
 
         Map<String, String> message_value = new HashMap<>();
+
         questionRepository.findAll().forEach( question ->
         {
             if(question.getRoom().getRoom_id() == room_id && question.getQuestion_id() == question_id)
@@ -107,6 +117,13 @@ public class Controller {
 
         webSocketConnection.connect().send("/room/message/"+ room_id, message_value);
 
+        message_value.put("question_id", Long.toString(question_id));
+        message_value.put("question", questionRepository.findById(question_id).get().getQuestion());
+        message_value.put("yes", Integer.toString(questionRepository.findById(question_id).get().getYes()));
+        message_value.put("no", Integer.toString(questionRepository.findById(question_id).get().getNo()));
+        message_value.put("room_id", Long.toString(room_id));
+
+        return message_value;
     }
 
 }

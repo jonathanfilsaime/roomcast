@@ -100,17 +100,15 @@ public class Controller {
             {
                 if(value.get("value"))
                 {
-                    int count = question.getYes();
-                    question.setYes(count + 1);
+                    question.setYes(question.getYes() + 1);
                     questionRepository.save(question);
-                    message_value.put("yes", String.valueOf(count));
+                    message_value.put("yes", Integer.toString(question.getYes()));
                 }
                 else
                 {
-                    int count = question.getNo();
-                    question.setNo(count + 1);
+                    question.setNo(question.getNo() + 1);
                     questionRepository.save(question);
-                    message_value.put("no", String.valueOf(count));
+                    message_value.put("no", Integer.toString(question.getNo()));
                 }
             }
         });

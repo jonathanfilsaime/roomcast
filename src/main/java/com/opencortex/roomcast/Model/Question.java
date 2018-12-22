@@ -13,14 +13,14 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long question_id;
+    Long id;
     String question;
     int yes = 0;
     int no = 0;
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "roomId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Room room;
 

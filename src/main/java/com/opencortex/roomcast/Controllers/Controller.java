@@ -6,6 +6,7 @@ import com.opencortex.roomcast.Repository.QuestionRepository;
 import com.opencortex.roomcast.Repository.RoomRepository;
 import com.opencortex.roomcast.WebSocketConfig.WebSocketConnection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -65,21 +66,15 @@ public class Controller {
     {
         List<Map<String, String>> questionArrayList = new ArrayList<>();
 
-        questionRepository.findAll().forEach( question ->
+        questionRepository.findAllByRoomId(id).forEach( question ->
         {
-            Map<String, String> questionMap = new HashMap<>();
-
-            questionMap.put("question_id", question.getQuestion_id().toString());
-            questionMap.put("question", question.getQuestion());
-            questionMap.put("yes", String.valueOf(question.getYes()));
-            questionMap.put("no", String.valueOf(question.getNo()));
-            questionMap.put("room_id", question.getRoom().getRoom_id().toString());
-
-            if(id == question.getRoom().getRoom_id())
-            {
+                Map<String, String> questionMap = new HashMap<>();
+                questionMap.put("question_id", question.getId().toString());
+                questionMap.put("question", question.getQuestion());
+                questionMap.put("yes", String.valueOf(question.getYes()));
+                questionMap.put("no", String.valueOf(question.getNo()));
+                questionMap.put("room_id", question.getRoom().getId().toString());
                 questionArrayList.add(questionMap);
-            }
-
         });
 
         return questionArrayList;
@@ -90,14 +85,11 @@ public class Controller {
     public Map<String, String> proxy(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id,
                       @RequestBody Map<String, Boolean> value) throws ExecutionException, InterruptedException
     {
-        System.err.println("/room/{id}/message id: " + room_id + " question_id : "+ question_id +  " message is : " + value.get("value"));
 
         Map<String, String> message_value = new HashMap<>();
 
-        questionRepository.findAll().forEach( question ->
+        questionRepository.findQuestionsByIdAndRoom_Id(question_id, room_id).forEach( question ->
         {
-            if(question.getRoom().getRoom_id() == room_id && question.getQuestion_id() == question_id)
-            {
                 if(value.get("value"))
                 {
                     question.setYes(question.getYes() + 1);
@@ -110,10 +102,11 @@ public class Controller {
                     questionRepository.save(question);
                     message_value.put("no", Integer.toString(question.getNo()));
                 }
-            }
         });
 
-        webSocketConnection.connect().send("/room/message/"+ room_id, message_value);
+        StompSession stompSession = webSocketConnection.connect();
+        stompSession.send("/room/message/"+ room_id, message_value);
+        stompSession.disconnect();
 
         message_value.put("question_id", Long.toString(question_id));
         message_value.put("question", questionRepository.findById(question_id).get().getQuestion());

@@ -38,7 +38,7 @@ public class Controller {
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.US).format(localDateTime)));
 
         Map<String, Integer> roomDetail = new HashMap<>();
-        roomDetail.put("room number", roomNumber);
+        roomDetail.put("roomNumber", roomNumber);
         return roomDetail;
     }
 
@@ -81,7 +81,7 @@ public class Controller {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/room/{room_id}/{question_id}/message" , method = RequestMethod.PUT)
+    @RequestMapping(value = "/room/{room_id}/question/{question_id}/message" , method = RequestMethod.PUT)
     public Map<String, String> proxy(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id,
                       @RequestBody Map<String, Boolean> value) throws ExecutionException, InterruptedException
     {

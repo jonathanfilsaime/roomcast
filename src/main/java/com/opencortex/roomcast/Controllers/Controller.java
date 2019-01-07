@@ -82,12 +82,17 @@ public class Controller {
 
     @CrossOrigin
     @RequestMapping(value = "/room/{room_id}/question/{question_id}/message" , method = RequestMethod.GET)
-    public List<Question> getMessageForRoom(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id)
+    public Map<String, String> getMessageForRoom(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id)
     {
-        List<Question> questionList = new ArrayList<>();
-        questionRepository.findQuestionsByIdAndRoom_Id(question_id, room_id).forEach( question -> questionList.add(question));
+        Map<String, String> messageMap = new HashMap<>();
+        questionRepository.findQuestionsByIdAndRoom_Id(question_id, room_id).forEach( question ->
+        {
+            messageMap.put("yes", String.valueOf(question.getYes()));
+            messageMap.put("no", String.valueOf(question.getNo()));
 
-        return questionList;
+        });
+
+        return messageMap;
     }
 
 

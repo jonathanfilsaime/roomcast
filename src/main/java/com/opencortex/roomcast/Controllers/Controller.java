@@ -81,6 +81,17 @@ public class Controller {
     }
 
     @CrossOrigin
+    @RequestMapping(value = "/room/{room_id}/question/{question_id}/message" , method = RequestMethod.GET)
+    public List<Question> getMessageForRoom(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id)
+    {
+        List<Question> questionList = new ArrayList<>();
+        questionRepository.findQuestionsByIdAndRoom_Id(question_id, room_id).forEach( question -> questionList.add(question));
+
+        return questionList;
+    }
+
+
+    @CrossOrigin
     @RequestMapping(value = "/room/{room_id}/question/{question_id}/message" , method = RequestMethod.PUT)
     public Map<String, String> proxy(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id,
                       @RequestBody Map<String, Boolean> value) throws ExecutionException, InterruptedException

@@ -117,10 +117,11 @@ public class Controller {
 
     @CrossOrigin
     @RequestMapping(value = "/room/{room_id}/question/{question_id}/message" , method = RequestMethod.PUT)
-    public Map<String, String> proxy(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id,
+    public Map<Long, Map<String, String>> proxy(@PathVariable("room_id") long room_id, @PathVariable("question_id") long question_id,
                       @RequestBody Map<String, Boolean> value) throws ExecutionException, InterruptedException
     {
 
+        Map<Long, Map<String, String>> message_object = new HashMap<Long, Map<String, String>>();
         Map<String, String> message_value = new HashMap<>();
 
         questionRepository.findQuestionsByIdAndRoom_Id(question_id, room_id).forEach( question ->
@@ -139,11 +140,15 @@ public class Controller {
                 }
         });
 
-        message_value.put("question_id", Long.toString(question_id));
+//        message_value.put("question_id", Long.toString(question_id));
 //        message_value.put("question", questionRepository.findById(question_id).get().getQuestion());
+//        message_value.put("room_id", Long.toString(room_id));
+
         message_value.put("yes", Integer.toString(questionRepository.findById(question_id).get().getYes()));
         message_value.put("no", Integer.toString(questionRepository.findById(question_id).get().getNo()));
-//        message_value.put("room_id", Long.toString(room_id));
+
+
+        message_object.put(question_id, message_value);
 
         StompSession stompSession = webSocketConnection.connect();
         stompSession.send("/room/"+ room_id, message_value);
@@ -151,7 +156,7 @@ public class Controller {
 
 
 
-        return message_value;
+        return message_object;
     }
 
 }

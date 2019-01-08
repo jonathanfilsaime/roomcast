@@ -139,15 +139,17 @@ public class Controller {
                 }
         });
 
-        StompSession stompSession = webSocketConnection.connect();
-        stompSession.send("/room/message/"+ room_id, message_value);
-        stompSession.disconnect();
-
         message_value.put("question_id", Long.toString(question_id));
         message_value.put("question", questionRepository.findById(question_id).get().getQuestion());
         message_value.put("yes", Integer.toString(questionRepository.findById(question_id).get().getYes()));
         message_value.put("no", Integer.toString(questionRepository.findById(question_id).get().getNo()));
         message_value.put("room_id", Long.toString(room_id));
+
+        StompSession stompSession = webSocketConnection.connect();
+        stompSession.send("/room/"+ room_id, message_value);
+        stompSession.disconnect();
+
+
 
         return message_value;
     }

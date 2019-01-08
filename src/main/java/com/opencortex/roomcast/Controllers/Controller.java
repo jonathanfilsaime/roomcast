@@ -121,7 +121,7 @@ public class Controller {
                       @RequestBody Map<String, Boolean> value) throws ExecutionException, InterruptedException
     {
 
-        Map<Long, Map<String, String>> message_object = new HashMap<Long, Map<String, String>>();
+        Map<Long, Map<String, String>> message_object = new HashMap<>();
         Map<String, String> message_value = new HashMap<>();
 
         questionRepository.findQuestionsByIdAndRoom_Id(question_id, room_id).forEach( question ->
@@ -151,7 +151,7 @@ public class Controller {
         message_object.put(question_id, message_value);
 
         StompSession stompSession = webSocketConnection.connect();
-        stompSession.send("/room/"+ room_id, message_value);
+        stompSession.send("/room/"+ room_id, message_object);
         stompSession.disconnect();
 
 

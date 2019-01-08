@@ -1,5 +1,6 @@
 package com.opencortex.roomcast.Controllers;
 
+import com.opencortex.roomcast.Exceptions.RoomNotFoundException;
 import com.opencortex.roomcast.Model.Question;
 import com.opencortex.roomcast.Model.Room;
 import com.opencortex.roomcast.Repository.QuestionRepository;
@@ -40,6 +41,24 @@ public class Controller {
         Map<String, Integer> roomDetail = new HashMap<>();
         roomDetail.put("roomNumber", roomNumber);
         return roomDetail;
+    }
+
+    @CrossOrigin
+    @RequestMapping(value="room/{room_id}", method = RequestMethod.GET)
+    public Map<String, String> getRoomInfo(@PathVariable("room_id") long room_id)
+    {
+        if(!roomRepository.findById(room_id).isPresent())
+        {
+            throw new RoomNotFoundException("room : " + room_id + " does not exist.");
+        }
+
+        Map<String, String> roomInfo = new HashMap<>();
+
+        roomInfo.put("Description", roomRepository.findById(room_id).get().getDescription());
+        roomInfo.put("TimeStamp", roomRepository.findById(room_id).get().getTimeStamp());
+
+        return roomInfo;
+
     }
 
     @CrossOrigin
